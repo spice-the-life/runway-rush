@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Runway Rush</title>
+<style>
+:root{--pink:#ff69b4;--deep:#38233c;--muted:#967e9b;--line:#f2cfe3;--bg:#fff0f8}
+*{box-sizing:border-box}body{margin:0;color:var(--deep);font-family:Inter,ui-sans-serif,system-ui,"Segoe UI",sans-serif;background:linear-gradient(135deg,#fff0f8,#f2e9ff);min-height:100vh}
+header{height:78px;background:#ffffffdf;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:5;backdrop-filter:blur(10px)}
+.logo{font-weight:1000;font-size:clamp(22px,3vw,34px);letter-spacing:-1.4px}.logo span{color:#ed4e9f}.pill{border:1px solid #f4d6e7;background:#fff9fd;padding:9px 13px;border-radius:99px;font-weight:850;font-size:12px}
+main{max-width:1450px;margin:auto;padding:24px;display:grid;grid-template-columns:minmax(420px,1.1fr) minmax(360px,.9fr);gap:22px}
+.stage{min-height:680px;position:relative;overflow:hidden;border:1px solid #f3cce2;border-radius:28px;background:radial-gradient(ellipse at 50% 27%,#fff 0,#ffe8f5 45%,#f6d8ef 100%);box-shadow:0 15px 40px #a64c8312}
+.stage:before,.stage:after{content:"";position:absolute;top:6%;height:100%;width:2px;background:#ffffff80;left:22%;transform:rotate(18deg)}.stage:after{left:78%;transform:rotate(-18deg)}
+.stage-head{position:absolute;top:22px;left:22px;right:22px;display:flex;justify-content:space-between;gap:8px;z-index:3}
+.runway{position:absolute;bottom:-25px;left:8%;width:84%;height:150px;background:linear-gradient(90deg,#f8b4d8,#fff5fc 45%,#e5c4ff);transform:perspective(240px) rotateX(20deg);border-radius:50%;box-shadow:0 0 35px #d88bbd40}
+.spotlight{position:absolute;inset:0;background:linear-gradient(75deg,transparent 0 24%,#fff5 25%,transparent 39% 61%,#fff5 75%,transparent 76%);pointer-events:none}
+.doll-wrap{position:absolute;left:50%;bottom:105px;transform:translateX(-50%);width:260px;height:490px;z-index:2;transition:transform .3s;filter:drop-shadow(0 15px 9px #9e4d7b20)}
+.doll{position:absolute;inset:0}
+.hairback{position:absolute;left:72px;top:24px;width:116px;height:178px;background:#69412f;border-radius:52% 48% 34% 34%;z-index:1}
+.hairside{position:absolute;top:72px;left:67px;width:23px;height:146px;background:#69412f;border-radius:0 0 16px 16px;z-index:3}
+.hairside:after{content:"";position:absolute;left:103px;top:0;width:23px;height:146px;background:inherit;border-radius:0 0 16px 16px}
+.ponytail{position:absolute;left:164px;top:43px;width:35px;height:115px;border-radius:50% 50% 70% 70%;background:#69412f;transform:rotate(-20deg);z-index:0;display:none}
+.head{position:absolute;top:31px;left:90px;width:80px;height:94px;border-radius:45% 45% 48% 48%;background:#f1c7a8;z-index:2;box-shadow:inset 0 -4px #e8b398}
+.fringe{position:absolute;top:25px;left:86px;width:88px;height:49px;background:#69412f;border-radius:55% 55% 25% 25%;z-index:4;clip-path:polygon(0 0,100% 0,100% 75%,76% 60%,61% 100%,45% 62%,27% 92%,17% 58%,0 75%)}
+.eye{position:absolute;top:70px;width:7px;height:9px;background:#45303a;border-radius:50%;z-index:5}.eye.l{left:111px}.eye.r{left:143px}
+.blush{position:absolute;top:87px;width:15px;height:7px;border-radius:50%;background:#e88e9c88;z-index:5}.blush.l{left:98px}.blush.r{left:146px}
+.mouth{position:absolute;top:97px;left:125px;width:12px;height:5px;border-bottom:2px solid #b85d75;border-radius:50%;z-index:5}
+.glasses{display:none;position:absolute;top:62px;left:90px;width:80px;height:24px;z-index:6;border-top:3px solid #4d3655}
+.glasses:before,.glasses:after{content:"";position:absolute;top:0;width:29px;height:20px;border:3px solid #4d3655;border-radius:8px}.glasses:before{left:0}.glasses:after{right:0}
+.neck{position:absolute;top:112px;left:118px;width:24px;height:28px;background:#efc1a2;z-index:2}
+.torso{position:absolute;top:130px;left:76px;width:108px;height:118px;background:var(--top,#bba1ff);clip-path:polygon(25% 0,75% 0,100% 100%,0 100%);z-index:3;border-radius:12px}
+.sleeve{position:absolute;top:134px;width:33px;height:58px;background:var(--top,#bba1ff);z-index:3;border-radius:10px;display:none}
+.sleeve.l{left:62px;transform:rotate(15deg)}.sleeve.r{left:165px;transform:rotate(-15deg)}
+.arm{position:absolute;top:143px;width:27px;height:112px;background:#f1c7a8;border-radius:16px;z-index:2}.arm.l{left:61px;transform:rotate(8deg)}.arm.r{left:174px;transform:rotate(-8deg)}
+.bottom{position:absolute;top:231px;left:74px;width:112px;height:92px;background:var(--bottom,#5c76bd);clip-path:polygon(15% 0,85% 0,100% 100%,0 100%);z-index:4}
+.leg{position:absolute;top:315px;width:39px;height:89px;background:#f1c7a8;border-radius:12px 12px 9px 9px;z-index:2}.leg.l{left:89px}.leg.r{left:132px}
+.shoe{position:absolute;top:391px;width:49px;height:20px;background:#f9e5f3;border-radius:14px 8px 5px 5px;z-index:4;border:1px solid #e8c7d8}.shoe.l{left:76px}.shoe.r{left:130px}
+.bag{position:absolute;top:210px;left:187px;width:42px;height:48px;background:#ffcbdf;border:3px solid #c75b92;border-radius:8px 8px 13px 13px;z-index:6;display:none}
+.bag:before{content:"";position:absolute;left:7px;top:-15px;width:20px;height:15px;border:3px solid #c75b92;border-bottom:0;border-radius:12px 12px 0 0}
+.necklace{position:absolute;top:138px;left:108px;width:44px;height:26px;border:2px solid #e7bb55;border-top:0;border-radius:0 0 24px 24px;z-index:5;display:none}
+.earrings{position:absolute;top:94px;left:86px;width:7px;height:12px;background:#f4c95b;border-radius:50%;z-index:6;display:none;box-shadow:91px 0 #f4c95b}
+.hat{position:absolute;top:9px;left:80px;width:100px;height:20px;background:#f2d1ff;border-radius:50%;z-index:6;display:none}.hat:before{content:"";position:absolute;left:20px;top:-35px;width:60px;height:40px;background:inherit;border-radius:30px 30px 5px 5px}
+.wings{position:absolute;top:170px;left:4px;width:62px;height:100px;z-index:1;display:none}.wings:before,.wings:after{content:"";position:absolute;width:42px;height:80px;background:#fff9ff99;border:2px solid #fff;clip-path:polygon(50% 0,100% 25%,80% 70%,50% 100%,20% 70%,0 25%);transform:rotate(-25deg)}.wings:after{left:35px;transform:rotate(25deg)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:0 15px 40px #a64c8310;align-self:start}
+h1{font-size:25px;margin:0 0 5px}.sub{color:var(--muted);margin:0 0 20px;font-size:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid var(--line);background:#fff8fc;color:#9a5c83;border-radius:13px;padding:10px 13px;font-weight:850;cursor:pointer}.tab.active{background:var(--pink);color:white;border-color:var(--pink)}
+.field{margin:13px 0}.field label{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:900;margin-bottom:8px}.field select,.field input{width:100%;padding:12px;border:1px solid #ebcddd;border-radius:12px;background:#fff;font:inherit;color:var(--deep)}
+.swatches{display:flex;gap:9px;flex-wrap:wrap}.swatch{width:31px;height:31px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 1px #e5c8d9;cursor:pointer}.swatch:focus{outline:3px solid var(--pink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.actions{display:flex;gap:9px;margin-top:20px}.btn{border:0;border-radius:14px;padding:13px 15px;font-weight:900;cursor:pointer;font:inherit}.primary{background:var(--pink);color:white;flex:1;box-shadow:0 6px 14px #ff70b733}.secondary{background:#fff0f8;color:#a64c83;border:1px solid var(--line)}
+.hint{margin-top:14px;background:#fff5fb;border-radius:13px;padding:12px;font-size:12px;color:#916a86;line-height:1.5}
+.round-card{background:linear-gradient(120deg,#fff3fa,#f4ecff);border:1px solid #f0d0e7;border-radius:18px;padding:15px;margin:14px 0}.round-card strong{display:block;font-size:17px;margin:3px 0}.round-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:#8e6c8b}.timer{font-weight:1000;color:#d94b99;font-size:18px}.hidden{display:none!important}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:12px}.stage{min-height:620px}.panel{padding:18px}}@media(max-width:480px){header{padding:0 14px}.tag{display:none}.stage{min-height:560px}.doll-wrap{transform:translateX(-50%) scale(.86);transform-origin:bottom center;bottom:80px}.grid2{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><div class="logo">RUNWAY <span>RUSH</span> ✦</div><div class="pill">✧ STYLE YOUR STAR ✧</div></header>
+<main>
+<section class="stage" aria-label="Fashion character preview"><div class="spotlight"></div>
+ <div class="stage-head"><div class="pill">✦ YOUR LOOK</div><div class="pill" id="lookName">Lavender Dream</div></div><div class="runway"></div>
+ <div class="doll-wrap" id="dollWrap"><div class="doll" id="doll">
+  <div class="ponytail" id="ponytail"></div><div class="hairback" id="hairback"></div><div class="hairside" id="hairside"></div>
+  <div class="head"></div><div class="fringe" id="fringe"></div><div class="eye l"></div><div class="eye r"></div><div class="blush l"></div><div class="blush r"></div><div class="mouth"></div><div class="glasses" id="glasses"></div><div class="hat" id="hat"></div><div class="earrings" id="earrings"></div>
+  <div class="neck"></div><div class="necklace" id="necklace"></div><div class="arm l"></div><div class="arm r"></div><div class="sleeve l" id="sleeveL"></div><div class="sleeve r" id="sleeveR"></div><div class="torso" id="torso"></div><div class="bottom" id="bottom"></div><div class="leg l" id="legL"></div><div class="leg r" id="legR"></div><div class="shoe l" id="shoeL"></div><div class="shoe r" id="shoeR"></div><div class="bag" id="bag"></div><div class="wings" id="wings"></div>
+ </div></div>
+</section>
+<section class="panel">
+ <h1>Build your outfit</h1><p class="sub">Mix, match, and make the runway yours.</p>
+ <div class="round-card" id="roundCard"><div class="round-meta"><span>RUNWAY CHALLENGE</span><span id="roundStatus">READY WHEN YOU ARE</span></div><strong id="roundTheme">✨ Theme: Fairycore</strong><div class="round-meta"><span id="roundDescription">Create a magical, dreamy look.</span><span class="timer" id="timer">02:00</span></div><div class="actions"><button class="btn primary" id="startRound">Start round</button><button class="btn secondary" id="nextTheme">New theme</button></div></div>
+ <div class="tabs"><button class="tab active" data-tab="clothes">👗 Clothes</button><button class="tab" data-tab="hair">💇 Hair</button><button class="tab" data-tab="extras">✨ Accessories</button></div>
+ <div id="clothes" class="tabContent">
+  <div class="grid2">
+   <div class="field"><label for="topStyle">Top style</label><select id="topStyle"><option value="crop">Sweetheart crop top</option><option value="tee">Casual tee</option><option value="jacket">Fashion jacket</option><option value="sleeves">Puff-sleeve blouse</option><option value="strap">Strappy top</option></select></div>
+   <div class="field"><label for="bottomStyle">Bottom style</label><select id="bottomStyle"><option value="skirt">Mini skirt</option><option value="jeans">Wide-leg jeans</option><option value="shorts">Cute shorts</option><option value="longskirt">Long skirt</option><option value="dress">One-piece dress</option></select></div>
+   <div class="field"><label for="shoeStyle">Shoes</label><select id="shoeStyle"><option value="heels">Platform heels</option><option value="sneakers">Sneakers</option><option value="boots">Knee boots</option><option value="flats">Ballet flats</option></select></div>
+   <div class="field"><label for="pattern">Fabric detail</label><select id="pattern"><option value="plain">Plain</option><option value="dots">Polka dots</option><option value="sparkle">Sparkle</option><option value="stripes">Stripes</option></select></div>
+  </div>
+  <div class="field"><label>Top color</label><div class="swatches" id="topColors"></div></div><div class="field"><label>Bottom color</label><div class="swatches" id="bottomColors"></div></div>
+ </div>
+ <div id="hair" class="tabContent hidden">
+  <div class="field"><label for="hairStyle">Hairstyle</label><select id="hairStyle"><option value="long">Long waves</option><option value="bob">Chic bob</option><option value="ponytail">High ponytail</option><option value="twin">Twin tails</option><option value="bun">Double buns</option><option value="short">Short cut</option></select></div>
+  <div class="field"><label>Hair color</label><div class="swatches" id="hairColors"></div></div>
+ </div>
+ <div id="extras" class="tabContent hidden">
+  <div class="grid2"><div class="field"><label for="bagPick">Handbag</label><select id="bagPick"><option value="none">No bag</option><option value="mini">Mini handbag</option><option value="heart">Heart purse</option></select></div>
+  <div class="field"><label for="neckPick">Necklace</label><select id="neckPick"><option value="none">No necklace</option><option value="gold">Gold necklace</option></select></div>
+  <div class="field"><label for="earPick">Earrings</label><select id="earPick"><option value="none">No earrings</option><option value="gold">Gold earrings</option></select></div>
+  <div class="field"><label for="glassesPick">Glasses</label><select id="glassesPick"><option value="none">No glasses</option><option value="glasses">Cute glasses</option></select></div>
+  <div class="field"><label for="hatPick">Hat</label><select id="hatPick"><option value="none">No hat</option><option value="beret">Pastel beret</option></select></div>
+  <div class="field"><label for="wingsPick">Fantasy details</label><select id="wingsPick"><option value="none">None</option><option value="wings">Fairy wings</option></select></div></div>
+  <div class="field"><label for="theme">Look name</label><select id="theme"><option>Lavender Dream</option><option>Pink Popstar</option><option>Midnight Chic</option><option>Fairycore</option><option>Denim Day</option><option>Cherry Blossom</option><option>Y2K Star</option></select></div>
+ </div>
+ <div class="actions"><button class="btn primary" id="random">✧ Random look</button><button class="btn secondary" id="reset">Reset</button></div>
+ <div class="hint" id="hint">✨ Pick a runway theme, style your character, then start a round. Your outfit choices update the preview instantly.</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const palettes={top:['#bba1ff','#ff80b7','#8bd8cf','#ffcf70','#f4f1ff','#8ea7ff','#e7a8b8','#4a304f','#a8d77b'],bottom:['#5c76bd','#28263b','#f1b5d7','#79a89b','#f4f1ff','#b99a7a','#454d72','#ffca75','#d7b6ff'],hair:['#69412f','#1e1a24','#c98b51','#e5d0a4','#ed9cbd','#9ca3d8','#d8d8df','#b53b72','#547c6d']};
+const state={top:'#bba1ff',bottom:'#5c76bd',hair:'#69412f'};
+function makeSwatches(id,key){const host=$(id);palettes[key].forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background=c;b.title=c;b.setAttribute('aria-label',key+' color '+c);b.onclick=()=>{state[key]=c;render()};host.appendChild(b)})}
+makeSwatches('topColors','top');makeSwatches('bottomColors','bottom');makeSwatches('hairColors','hair');
+const themes=[
+ {name:'Fairycore',desc:'Create a magical, dreamy look.',emoji:'🧚'},
+ {name:'Pop Star',desc:'Give main-stage superstar energy.',emoji:'🎤'},
+ {name:'Denim Day',desc:'Make denim the star of your outfit.',emoji:'👖'},
+ {name:'Pink Glam',desc:'Go bold, glossy, and pink.',emoji:'💗'},
+ {name:'Midnight Chic',desc:'Dark, sleek, and runway-ready.',emoji:'🌙'},
+ {name:'Garden Party',desc:'Soft florals and fresh spring colors.',emoji:'🌷'},
+ {name:'Y2K Star',desc:'Playful throwback fashion with sparkle.',emoji:'💿'},
+ {name:'Red Carpet',desc:'Dress like the cameras are waiting.',emoji:'📸'}
+];
+let themeIndex=0,roundActive=false,timeLeft=120,timerId=null;
+function chooseTheme(){themeIndex=Math.floor(Math.random()*themes.length);updateTheme()}
+function updateTheme(){const t=themes[themeIndex];$('roundTheme').textContent=t.emoji+' Theme: '+t.name;$('roundDescription').textContent=t.desc}
+function render(){
+ $('torso').style.background=state.top;$('torso').style.setProperty('--top',state.top);$('bottom').style.background=state.bottom;
+ const top=$('topStyle').value, bottom=$('bottomStyle').value, hair=$('hairStyle').value;
+ $('torso').style.clipPath=top==='tee'?'polygon(20% 0,80% 0,100% 25%,82% 40%,82% 100%,18% 100%,18% 40%,0 25%)':top==='jacket'?'polygon(20% 0,80% 0,100% 100%,0 100%)':top==='sleeves'?'polygon(20% 0,80% 0,90% 20%,100% 100%,0 100%,10% 20%)':top==='strap'?'polygon(32% 0,68% 0,100% 100%,0 100%)':'polygon(25% 0,75% 0,100% 100%,0 100%)';
+ $('sleeveL').style.display=$('sleeveR').style.display=top==='tee'||top==='jacket'||top==='sleeves'?'block':'none';$('sleeveL').style.background=$('sleeveR').style.background=state.top;
+ if(bottom==='jeans'){$('bottom').style.clipPath='polygon(8% 0,92% 0,88% 100%,53% 100%,50% 10%,46% 100%,12% 100%)';$('bottom').style.top='231px';$('bottom').style.height='92px';$('legL').style.display=$('legR').style.display='none'}
+ else if(bottom==='shorts'){$('bottom').style.clipPath='polygon(10% 0,90% 0,100% 65%,55% 65%,50% 25%,45% 65%,0 65%)';$('bottom').style.top='231px';$('bottom').style.height='58px';$('legL').style.display=$('legR').style.display='block';$('legL').style.top=$('legR').style.top='275px'}
+ else if(bottom==='longskirt'){$('bottom').style.clipPath='polygon(15% 0,85% 0,100% 100%,0 100%)';$('bottom').style.top='231px';$('bottom').style.height='145px';$('legL').style.display=$('legR').style.display='none'}
+ else if(bottom==='dress'){$('torso').style.clipPath='polygon(25% 0,75% 0,100% 100%,0 100%)';$('bottom').style.top='210px';$('bottom').style.height='150px';$('bottom').style.width='128px';$('bottom').style.left='66px';$('bottom').style.clipPath='polygon(18% 0,82% 0,100% 100%,0 100%)';$('legL').style.display=$('legR').style.display='block';$('legL').style.top=$('legR').style.top='350px'}
+ else{$('bottom').style.clipPath='polygon(17% 0,83% 0,100% 100%,0 100%)';$('bottom').style.top='231px';$('bottom').style.height='92px';$('bottom').style.width='112px';$('bottom').style.left='74px';$('legL').style.display=$('legR').style.display='block';$('legL').style.top=$('legR').style.top='315px'}
+ if(bottom!=='dress'){$('bottom').style.width='112px';$('bottom').style.left='74px'}
+ $('hairback').style.background=$('hairside').style.background=$('fringe').style.background=$('ponytail').style.background=state.hair;
+ $('hairback').style.display=hair==='short'?'none':'block';$('hairside').style.display=['bob','short'].includes(hair)?'none':'block';$('ponytail').style.display=hair==='ponytail'?'block':'none';
+ $('hairback').style.height=hair==='bob'?'105px':hair==='twin'?'125px':hair==='bun'?'95px':hair==='short'?'70px':'178px';
+ $('hairside').style.height=hair==='long'?'146px':hair==='twin'?'132px':hair==='bun'?'100px':'65px';
+ $('hairback').style.width=hair==='twin'?'96px':hair==='bun'?'96px':hair==='short'?'104px':'116px';$('hairback').style.left=hair==='twin'?'82px':hair==='bun'?'82px':hair==='short'?'78px':'72px';
+ if(hair==='twin'){$('hairside').style.left='65px';$('hairside').style.width='30px';$('hairside').style.height='145px';$('hairside').style.transform='rotate(8deg)';$('hairside').style.boxShadow='100px 0 0 '+state.hair}
+ else if(hair==='bun'){$('hairside').style.left='72px';$('hairside').style.width='25px';$('hairside').style.boxShadow='80px -42px 0 3px '+state.hair;$('hairside').style.transform='';}
+ else{$('hairside').style.left='67px';$('hairside').style.width='23px';$('hairside').style.boxShadow='';$('hairside').style.transform=''}
+ $('fringe').style.height=hair==='short'?'32px':hair==='bob'?'38px':'49px';
+ $('glasses').style.display=$('glassesPick').value==='glasses'?'block':'none';
+ $('bag').style.display=$('bagPick').value==='none'?'none':'block';$('bag').style.background=$('bagPick').value==='heart'?'#ff9ebf':'#ffcbdf';$('necklace').style.display=$('neckPick').value==='none'?'none':'block';$('earrings').style.display=$('earPick').value==='none'?'none':'block';$('hat').style.display=$('hatPick').value==='none'?'none':'block';$('wings').style.display=$('wingsPick').value==='none'?'none':'block';
+ const shoe=$('shoeStyle').value;$('shoeL').style.background=$('shoeR').style.background=shoe==='boots'?'#433044':shoe==='sneakers'?'#fff':shoe==='flats'?'#f6c8e1':'#f9e5f3';$('shoeL').style.height=$('shoeR').style.height=shoe==='boots'?'34px':'20px';$('shoeL').style.top=$('shoeR').style.top=shoe==='boots'?'377px':'391px';
+ $('lookName').textContent=$('theme').value;
+ const pattern=$('pattern').value;$('torso').style.backgroundImage=pattern==='dots'?'radial-gradient(#ffffffc9 2px,transparent 3px) 0 0/18px 18px':pattern==='stripes'?'repeating-linear-gradient(45deg,transparent 0 10px,#ffffff80 10px 14px)':pattern==='sparkle'?'radial-gradient(circle at 25% 30%,#fff 0 2px,transparent 3px),radial-gradient(circle at 75% 55%,#fff 0 2px,transparent 3px)':'none';$('torso').style.backgroundColor=state.top;
+ $('bottom').style.backgroundImage=pattern==='dots'?'radial-gradient(#ffffffc9 2px,transparent 3px) 0 0/18px 18px':pattern==='stripes'?'repeating-linear-gradient(45deg,transparent 0 10px,#ffffff80 10px 14px)':pattern==='sparkle'?'radial-gradient(circle at 25% 30%,#fff 0 2px,transparent 3px),radial-gradient(circle at 75% 55%,#fff 0 2px,transparent 3px)':'none';
+}
+['topStyle','bottomStyle','shoeStyle','pattern','hairStyle','bagPick','neckPick','earPick','glassesPick','hatPick','wingsPick','theme'].forEach(id=>$(id).addEventListener('change',render));
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));document.querySelectorAll('.tabContent').forEach(x=>x.classList.toggle('hidden',x.id!==btn.dataset.tab))}));
+$('random').onclick=()=>{for(const id of ['topStyle','bottomStyle','shoeStyle','pattern','hairStyle','bagPick','neckPick','earPick','glassesPick','hatPick','wingsPick','theme']){const el=$(id);el.selectedIndex=Math.floor(Math.random()*el.options.length)}for(const k of Object.keys(state))state[k]=palettes[k][Math.floor(Math.random()*palettes[k].length)];render()};
+$('reset').onclick=()=>{['topStyle','bottomStyle','shoeStyle','pattern','hairStyle','bagPick','neckPick','earPick','glassesPick','hatPick','wingsPick','theme'].forEach(id=>$(id).selectedIndex=0);state.top='#bba1ff';state.bottom='#5c76bd';state.hair='#69412f';render()};
+$('nextTheme').onclick=()=>{themeIndex=(themeIndex+1)%themes.length;updateTheme()};
+$('startRound').onclick=()=>{if(roundActive){clearInterval(timerId);roundActive=false;$('startRound').textContent='Start round';$('roundStatus').textContent='ROUND PAUSED';$('hint').textContent='Round paused. You can keep styling, then start again.';return}
+roundActive=true;timeLeft=120;$('startRound').textContent='Pause round';$('roundStatus').textContent='ROUND IN PROGRESS';$('hint').textContent='⏱️ Your runway round has started! Create a look that matches the theme before time runs out.';clearInterval(timerId);timerId=setInterval(()=>{timeLeft--;const m=String(Math.floor(timeLeft/60)).padStart(2,'0'),s=String(timeLeft%60).padStart(2,'0');$('timer').textContent=m+':'+s;if(timeLeft<=0){clearInterval(timerId);roundActive=false;$('startRound').textContent='Start new round';$('roundStatus').textContent='TIME IS UP!';$('hint').textContent='✨ Time is up! Your look is ready for the runway. Choose a new theme to play again.'}},1000)};
+chooseTheme();render();
+</script></body></html>
